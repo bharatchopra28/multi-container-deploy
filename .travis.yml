@@ -1,0 +1,20 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker image build -t bharatchopra/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker container run bharatchopra/react-test npm run test -- --coverage
+
+after_success:
+  - docker image build -t bharatchopra/multi-client ./client
+  - docker image build -t bharatchopra/multi-nginx ./nginx
+  - docker image build -t bharatchopra/multi-server ./server
+  - docker image build -t bharatchopra/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker image push bharatchopra/multi-client
+  - docker image push bharatchopra/multi-nginx
+  - docker image push bharatchopra/multi-server
+  - docker image push bharatchopra/multi-worker
