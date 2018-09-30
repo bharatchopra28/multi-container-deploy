@@ -18,3 +18,16 @@ after_success:
   - docker image push bharatchopra/multi-nginx
   - docker image push bharatchopra/multi-server
   - docker image push bharatchopra/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-south-1
+  app: multi-container
+  env: MultiContainer-env
+  bucket_name: elasticbeanstalk-ap-south-1-388844221725
+  bucket_path: multi-container
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
